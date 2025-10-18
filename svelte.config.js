@@ -8,18 +8,20 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			// default options are shown. On some platforms
-			// these options are set automatically — see below
 			pages: 'build',
 			assets: 'build',
 			fallback: 'index.html',
 			precompress: false,
 			strict: true
-		})
+		}),
 
-		// (optional) you can fine-tune which pages to prerender:
-		// prerender: { entries: ['*'], crawl: true }
-		// but you *don’t* use a `default` key here
+		// ✅ Important: fix base path for GitHub Pages subdirectory
+		paths: {
+			base: process.env.NODE_ENV === 'production' ? '/demo' : ''
+		},
+
+		// optional, but ensures SvelteKit app files stay in a predictable dir
+		appDir: '_app'
 	}
 };
 

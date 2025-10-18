@@ -14,20 +14,28 @@ type BackendUrlMode = keyof typeof backendUrls;
 export default defineConfig(({ mode }) => {
 	const safeMode = mode as BackendUrlMode;
 	const backendUrl = backendUrls[safeMode] || backendUrls.production;
+	const isProduction = mode === 'production';
 
 	return {
+		// ✅ Critical: tells Vite to serve files under /demo/
+		base: isProduction ? '/demo/' : '/',
+
 		plugins: [tailwindcss(), sveltekit()],
+
 		optimizeDeps: {
 			exclude: ['clsx', '@xyflow/system', 'classcat']
 		},
+
 		server: {
 			host: '0.0.0.0',
 			port: 3000,
 			allowedHosts: ['*']
 		},
+
 		define: {
 			'import.meta.env.VITE_BACKEND_URL': JSON.stringify(backendUrl)
 		},
+
 		test: {
 			workspace: [
 				{

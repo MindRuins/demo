@@ -46,7 +46,7 @@
 				rows="6"
 				placeholder="Type your message..."
 				bind:value={userInput}
-				class="w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-y"
+				class="w-full resize-y rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 			></textarea>
 
 			<Button variant="primary" onclick={sendMessage} disabled={loading}>
@@ -56,7 +56,7 @@
 
 		<!-- Error Message -->
 		{#if error}
-			<div class="rounded-lg border border-red-200 bg-red-50 p-4 space-y-3">
+			<div class="space-y-3 rounded-lg border border-red-200 bg-red-50 p-4">
 				<p class="font-medium text-red-800">Error: {error}</p>
 
 				{#if error === 'Please set your API key first'}
