@@ -3,6 +3,7 @@
 	import { apiKey } from '$lib/stores/status.cache';
 	import { ChatLLM } from '$lib/backend/llm_prompt';
 	import { moodPromptTemplate } from '$lib/data/llm_template/mood';
+	import { parseLLMJson } from '$lib/utils/llm/parser';
 	import Button from '$lib/UI/Button.svelte';
 	import { goto } from '$app/navigation';
 
@@ -10,6 +11,7 @@
 	let response = '';
 	let loading = false;
 	let error = '';
+	let mood: string | null = null;
 
 	async function sendMessage() {
 		if (!userInput.trim()) return;
@@ -21,9 +23,12 @@
 		loading = true;
 		error = '';
 		response = '';
+		mood = null;
 
 		try {
 			response = await ChatLLM($apiKey, moodPromptTemplate, userInput);
+			const parsed = parseLLMJson(response);
+			mood = parsed.mood?.toLowerCase?.() ?? null;
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'An error occurred';
 		} finally {
@@ -33,6 +38,21 @@
 
 	function goToKeyPage() {
 		goto('/key');
+	}
+
+	function getMoodEmoji(m: string) {
+		switch (m) {
+			case 'happy':
+				return '😄';
+			case 'sad':
+				return '😢';
+			case 'angry':
+				return '😠';
+			case 'soso':
+				return '😐';
+			default:
+				return '❓';
+		}
 	}
 </script>
 
@@ -66,13 +86,26 @@
 			</div>
 		{/if}
 
+		
 		<!-- Response Section -->
+		<!--
 		{#if response}
 			<div class="rounded-lg border border-blue-200 bg-blue-50 p-6">
 				<h2 class="mb-3 text-sm font-semibold tracking-wide text-blue-800 uppercase">
-					Today's Mood
+					Raw Gemini Reply
 				</h2>
 				<p class="whitespace-pre-wrap text-gray-900">{response}</p>
+			</div>
+		{/if}
+		-->
+
+		<!-- Mood Display -->
+		{#if mood}
+			<div class="rounded-lg border border-green-200 bg-green-50 p-6 flex items-center gap-4">
+				<span class="text-5xl">{getMoodEmoji(mood)}</span>
+				<div>
+					<h2 class="text-lg font-semibold text-gray-900 capitalize">Mood: {mood}</h2>
+				</div>
 			</div>
 		{/if}
 

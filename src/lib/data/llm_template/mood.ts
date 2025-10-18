@@ -7,7 +7,7 @@ here is today's diary:
 \`\`\`
 
 reply me in structure output
-the mood only have 3 possible, sad, angry, happy, soso
+the mood only have 4 possible, sad, angry, happy, soso
 \`\`\`json
 {
   "mood": "<today's mood>"
