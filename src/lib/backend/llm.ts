@@ -1,0 +1,77 @@
+// src/lib/backend/llm.ts
+
+export async function LLMChat(message: string, onChunk: (chunk: string) => void) {
+	const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+	const response = await fetch(`${BACKEND_URL}/llm/chat`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ message })
+	});
+
+	if (!response.ok) {
+		throw new Error(`❌ Backend responded with ${response.status}`);
+	}
+
+	// ✅ Stream text response
+	const reader = response.body?.getReader();
+	if (!reader) throw new Error('No stream found in response.');
+
+	const decoder = new TextDecoder();
+	let done = false;
+
+	while (!done) {
+		const { value, done: streamDone } = await reader.read();
+		done = streamDone;
+		if (value) {
+			const chunk = decoder.decode(value, { stream: true });
+			onChunk(chunk); // Send each piece to callback
+		}
+	}
+}
+
+interface GeminiResponse {
+	candidates: Array<{
+		content: {
+			parts: Array<{
+				text: string;
+			}>;
+			role: string;
+		};
+		finishReason: string;
+		index: number;
+	}>;
+}
+
+export async function generateContent(apiKey: string, prompt: string): Promise<string> {
+	const url =
+		'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+
+	const response = await fetch(url, {
+		method: 'POST',
+		headers: {
+			'x-goog-api-key': apiKey,
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			contents: [
+				{
+					parts: [
+						{
+							text: prompt
+						}
+					]
+				}
+			]
+		})
+	});
+
+	if (!response.ok) {
+		throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+	}
+
+	const data: GeminiResponse = await response.json();
+
+	// Return the first part's text
+	return data.candidates[0]?.content.parts[0]?.text || '';
+}
