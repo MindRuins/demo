@@ -4,6 +4,7 @@
 	import { ChatWithGemini } from '$lib/backend/llm';
 	import Button from '$lib/UI/Button.svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	let userInput = '';
 	let response = '';
@@ -31,7 +32,7 @@
 	}
 
 	function goToKeyPage() {
-		goto('/key');
+		goto(resolve('/key'));
 	}
 </script>
 

@@ -4,6 +4,7 @@
 	import Label from '$lib/UI/Label.svelte';
 	import Button from '$lib/UI/Button.svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	let inputValue = '';
 
@@ -18,7 +19,7 @@
 	}
 
 	function goHome() {
-		goto('/'); // ✅ Navigate to home page
+		goto(resolve(`/`));
 	}
 </script>
 

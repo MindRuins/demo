@@ -6,6 +6,7 @@
 	import { parseLLMJson } from '$lib/utils/llm/parser';
 	import Button from '$lib/UI/Button.svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 
 	let userInput = '';
 	let response = '';
@@ -37,7 +38,7 @@
 	}
 
 	function goToKeyPage() {
-		goto('/key');
+		goto(resolve('/key'));
 	}
 
 	function getMoodEmoji(m: string) {
