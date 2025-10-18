@@ -1,9 +1,9 @@
-<!-- src/routes/key/+page.svelte -->
 <script lang="ts">
 	import { apiKey } from '$lib/stores/status.cache';
 	import Input from '$lib/UI/Input.svelte';
 	import Label from '$lib/UI/Label.svelte';
 	import Button from '$lib/UI/Button.svelte';
+	import { goto } from '$app/navigation';
 
 	let inputValue = '';
 
@@ -15,6 +15,10 @@
 	function clearKey() {
 		apiKey.set('');
 		inputValue = '';
+	}
+
+	function goHome() {
+		goto('/'); // ✅ Navigate to home page
 	}
 </script>
 
@@ -46,6 +50,7 @@
 		<div class="flex gap-3">
 			<Button variant="primary" onclick={setKey}>Set Key</Button>
 			<Button variant="danger" onclick={clearKey}>Clear Key</Button>
+			<Button variant="secondary" onclick={goHome}>Go Home</Button>
 		</div>
 	</div>
 </div>

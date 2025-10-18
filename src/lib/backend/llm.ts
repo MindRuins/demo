@@ -1,35 +1,5 @@
 // src/lib/backend/llm.ts
 
-export async function LLMChat(message: string, onChunk: (chunk: string) => void) {
-	const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
-	const response = await fetch(`${BACKEND_URL}/llm/chat`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ message })
-	});
-
-	if (!response.ok) {
-		throw new Error(`❌ Backend responded with ${response.status}`);
-	}
-
-	// ✅ Stream text response
-	const reader = response.body?.getReader();
-	if (!reader) throw new Error('No stream found in response.');
-
-	const decoder = new TextDecoder();
-	let done = false;
-
-	while (!done) {
-		const { value, done: streamDone } = await reader.read();
-		done = streamDone;
-		if (value) {
-			const chunk = decoder.decode(value, { stream: true });
-			onChunk(chunk); // Send each piece to callback
-		}
-	}
-}
-
 interface GeminiResponse {
 	candidates: Array<{
 		content: {
@@ -43,7 +13,7 @@ interface GeminiResponse {
 	}>;
 }
 
-export async function generateContent(apiKey: string, prompt: string): Promise<string> {
+export async function ChatWithGemini(apiKey: string, prompt: string): Promise<string> {
 	const url =
 		'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
